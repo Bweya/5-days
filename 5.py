@@ -38,18 +38,21 @@ def trade_graph():
     worksheet.set_column("B:D", 30)
     bolds = workbook.add_format({'bold': True, 'font_size':18, 'border': 1})
     bold = workbook.add_format({'bold': True, 'align':'center', 'bg_color':'#A9A9A9', 'border': 1})
-    border = workbook.add_format({'border': 1})
+    border = workbook.add_format({'border': 1, 'align':'center'})
 
     worksheet.merge_range('A1:D1', 'UNICEF Country Offices FX Trade Delivery Days 01 JAN - 31 DEC '+year, bolds)
 
     worksheet.write('A2', 'Month', bold)
     worksheet.write('B2', 'Delivery within 5 days', bold)
     worksheet.write('C2', 'Delivery after 5 days', bold)
-    worksheet.write('D2', 'Total number of transactions', bold)
+    worksheet.write('D2', 'Number of FX Trades', bold)
 
 
 
     sum = 0
+    redsum = 0
+    greensum = 0
+
     row_record = 3
 
     for m in month:
@@ -67,6 +70,7 @@ def trade_graph():
                 greentransactions = 0
                 redtransactions = 0
 
+
                 for days in TradeData[10]:
 
                     if isinstance(days, str) == True:
@@ -78,8 +82,8 @@ def trade_graph():
                             redtransactions += 1
                 if m == f[:-16]:
 
-                    print(f[:-16], 'Within 5 days- transactions equals: ', greentransactions)
-                    print(f[:-16], 'Greater than 5 days- transactions equals: ', redtransactions)
+                    print(f[:-16], 'Within 5 days- FX Trades equals: ', greentransactions)
+                    print(f[:-16], 'Greater than 5 days- FX Trades equals: ', redtransactions)
                     print('\n')
 
                     print('["',f[:-16],'",', greentransactions,',"', "{:.0f}".format( greentransactions/(greentransactions+redtransactions)*100 ),'%",', redtransactions,',"',  "{:.0f}".format( redtransactions/(greentransactions+redtransactions)*100 ),'%"],', file = graph)
@@ -88,12 +92,16 @@ def trade_graph():
                     worksheet.write('C'+str(row_record), redtransactions, border)
                     worksheet.write('D'+str(row_record), (redtransactions+greentransactions), border)
 
-
+                    redsum += redtransactions
+                    greensum += greentransactions
                     sum += (redtransactions+greentransactions)
-        row_record+=1
+                    row_record+=1
 
-    worksheet.write('C'+str(row_record), "TOTAL", bold)
+    worksheet.write('A'+str(row_record), "TOTAL", bold)
+    worksheet.write('B'+str(row_record), "{:,.2f}".format(greensum), bold)
+    worksheet.write('C'+str(row_record), "{:,.2f}".format(redsum), bold)
     worksheet.write('D'+str(row_record), "{:,.2f}".format(sum), bold)
+
     worksheet.merge_range('B'+str(row_record+1)+':D'+str(row_record+1), "Compiled by: Louisa Tinga - Treasury Unit")
     print(']);', file = graph)
 
@@ -101,7 +109,7 @@ def trade_graph():
     print("title: 'UNICEF Country Offices FX Trade Delivery Days 01 JAN - 31 DEC 2019',", file = graph)
     print("chartArea: {width: '50%'},", file = graph)
     print('hAxis: {', file = graph)
-    print("title: 'Number of Transactions',", file = graph)
+    print("title: 'Number of approved FX Trades',", file = graph)
     print("minValue: 0", file = graph)
     print(' },', file = graph)
     print('vAxis: {', file = graph)
