@@ -8,8 +8,9 @@ import xlsxwriter
 
 def trade_graph():
 
-    year = '2019'
-    graph = open(year+'_Graph.html', 'w')
+    #year = '2019'
+    year = datetime.datetime.now().year
+    graph = open(str(year)+'_Graph.html', 'w')
     files = os.listdir('files')
 
     month = ['JAN','FEB', 'MAR', 'APR', 'MAY', 'JUNE', 'JULY', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
@@ -31,7 +32,7 @@ def trade_graph():
     print('\n')
 
 
-    workbook = xlsxwriter.Workbook(year+"_Report.xlsx")
+    workbook = xlsxwriter.Workbook(str(year)+"_Report.xlsx")
     worksheet = workbook.add_worksheet()
 
     worksheet.set_column('A:A', 15)
@@ -40,7 +41,7 @@ def trade_graph():
     bold = workbook.add_format({'bold': True, 'align':'center', 'bg_color':'#A9A9A9', 'border': 1})
     border = workbook.add_format({'border': 1, 'align':'center'})
 
-    worksheet.merge_range('A1:D1', 'UNICEF Country Offices FX Trade Delivery Days 01 JAN - 31 DEC '+year, bolds)
+    worksheet.merge_range('A1:D1', 'UNICEF Country Offices FX Trade Delivery Days 01 JAN - 31 DEC '+str(year), bolds)
 
     worksheet.write('A2', 'Month', bold)
     worksheet.write('B2', 'Delivery within 5 days', bold)
